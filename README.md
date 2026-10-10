@@ -1,6 +1,6 @@
 # PhaseTracking
 
-Causal phase tracking for closed-loop sleep neuromodulation: a strictly causal 250 Hz
+Causal EEG phase tracking for closed-loop sleep neuromodulation: a strictly causal 250 Hz
 streaming cecHT phase estimator, the machine contracts that pin its behaviour, an offline
 benchmarking harness, and a single-file plugin that runs the estimator inside a host
 application. This repository contains the early-stage development of a production-oriented algorithm, originating from an independent research project conducted during my internship at BrainCo (BrainSync) (June–September 2026).
