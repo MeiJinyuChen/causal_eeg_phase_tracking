@@ -1,0 +1,27 @@
+# Line-ending / byte-fidelity policy.
+#
+# A small number of files are byte-frozen: their sha256 values (and, for the
+# vendored snapshot, git blob sha1 values) are recorded in the project contracts
+# and re-read from disk by the test suite, so the checked-out bytes must be
+# identical on every platform and on every fresh clone.  The rules below pin
+# those bytes only; no file content is changed by them.
+
+# Vendored upstream snapshot: stored exactly as published upstream, so the
+# recorded git blob sha1 equals the upstream blob sha1.  `-text` disables all
+# conversion, because upstream ships phase.py with CRLF and LICENSE with LF.
+causal_phase_tracking/causal_cecHT/vendor/eikeosmers_cecht/phase.py -text
+causal_phase_tracking/causal_cecHT/vendor/eikeosmers_cecht/LICENSE -text
+
+# Frozen golden manifests: each records the sha256 of its own bytes inside the
+# golden JSON, computed on LF content.
+causal_phase_tracking/causal_simulation_evaluation/manifests/cecht_synthetic_cases.json text eol=lf
+causal_phase_tracking/causal_simulation_evaluation/manifests/cecht_synthetic_cases_100hz.json text eol=lf
+
+# Generated plugin and the build inputs whose sha256 it embeds in its header.
+# The project contract records checked_in_build_artifact_sha256 = 8d9bbec2...,
+# which is the sha256 of the artifact checked out with CRLF, built from inputs
+# hashed as LF.  Pinning these keeps a rebuild byte-reproducible on any platform.
+causal_phase_tracking/causal_cecHT/streaming_core.py text eol=lf
+causal_phase_tracking/causal_cecHT/pseudo_trigger.py text eol=lf
+realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT_wrapper.py text eol=lf
+realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT.py text eol=crlf

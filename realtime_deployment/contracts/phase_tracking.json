@@ -1,0 +1,469 @@
+{
+  "identity": {
+    "schema_version": 1,
+    "contract_version": "1.3.0",
+    "contract_id": "clas-phase-tracking-multirate-v1",
+    "status": "streaming_core_delivered_remaining_acceptance_items_open",
+    "effective_date": "2026-08-06",
+    "last_updated": "2026-09-18",
+    "path_reference_rule": "every structured path in this contract is relative to the directory that contains this contract; no machine-specific absolute path is kept"
+  },
+  "naming_notes": {
+    "estimator_ids": {
+      "pll": "canonical classic phase-locked-loop estimator",
+      "cecHT": "causal streaming cecHT estimator",
+      "ARHT": "autoregressive forward-prediction Hilbert transform"
+    },
+    "runtime_method_id_string": "the streaming core, its tests and the deployed plugin all use method_id 'cecHT'",
+    "follow_up_cleanup": "documents and code that still use the older estimator names are follow-up cleanup items, not part of this contract"
+  },
+  "planned_stages": [
+    {
+      "stage": "Freeze the shared contracts",
+      "deliverable": "authority, phase and time, streaming, benchmark, release and safety contracts",
+      "status": "frozen; the remaining items are recorded in acceptance_status"
+    },
+    {
+      "stage": "Build strictly causal streaming adapters for the three estimators",
+      "deliverable": "pll and ARHT keep a 100 Hz input contract while cecHT uses exactly 250 Hz",
+      "status": "cecHT streaming adapter delivered; pll and ARHT not started"
+    },
+    {
+      "stage": "Run a leakage-free engineering benchmark for the three estimators",
+      "deliverable": "development and untouched-test isolation, engineering metrics and visual results",
+      "status": "cecHT development selection produced, acceptance pending and untouched test not frozen; pll and ARHT pending"
+    },
+    {
+      "stage": "Ship the algorithms as host-loadable menu plugins",
+      "deliverable": "two independent menu plugins, one for pll and one for cecHT",
+      "status": "cecHT plugin delivered and live-verified; pll plugin not started"
+    },
+    {
+      "stage": "Add a configurable target-phase logical-intent policy",
+      "deliverable": "runtime-configurable target phase with a separate shadow benchmark",
+      "status": "not started; the pseudo-trigger exists as a logical intent only and real actuation stays disabled"
+    },
+    {
+      "stage": "Assemble the delivery presentation",
+      "deliverable": "evidence-backed summary of architecture, results, limits and provenance",
+      "status": "not started"
+    }
+  ],
+  "scope": {
+    "estimator_ids": [
+      "pll",
+      "cecHT",
+      "ARHT"
+    ],
+    "independent_gui_in_scope": false,
+    "companion_gui_status": "historical_artifact_not_current_deliverable",
+    "external_worker_in_current_scope": false,
+    "logical_stimulus_intent_mode": "offline_or_test_harness_shadow_only",
+    "physical_stimulation_enabled": false,
+    "human_stimulation_authorized": false,
+    "contract_stage_modifies_algorithm_code": false
+  },
+  "authority_and_provenance": {
+    "canonical_repository": "this delivered package",
+    "historical_archives": [
+      "earlier offline three-method benchmark workspace (historical benchmark code; provenance only, never an implementation entry point)",
+      "earlier offline sleep-EEG analysis workspace (provenance only, never an implementation entry point)"
+    ],
+    "local_introduction_commit": null,
+    "methods": {
+      "pll": {
+        "role": "unchanged_batch_mathematical_oracle",
+        "declared_origin": "withheld: this module is the result of a research internship in industry and is not included in this distribution for intellectual-property reasons",
+        "declared_author": "Dr Le Xing",
+        "upstream_commit": null,
+        "license": null,
+        "reuse_boundary": "unresolved_release_blocker"
+      },
+      "cecHT": {
+        "canonical_source": "../../causal_phase_tracking/causal_cecHT/streaming_core.py",
+        "upstream_source": "../../causal_phase_tracking/causal_cecHT/vendor/eikeosmers_cecht/phase.py",
+        "upstream_source_sha256": "49b85cfd75f382aa9b12e00fca4cbfd903bf4daad0101ccba42b162f2af27bea",
+        "historical_source": "../../offline_benchmark/offline_src/phase_benchmark/cecHT.py",
+        "historical_source_sha256": "47f0236b68421e0182c6c1e6c83f30ed4bdb6fe461a7cf563347984514b90058",
+        "declared_origin_url": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/phase.py",
+        "declared_secondary_origin": "MEEGkit ECHT",
+        "upstream_commit": "e079c3115f202a4272cf64143bf33ddddc247778",
+        "license": "BSD-3-Clause",
+        "reuse_boundary": "byte_identical_vendor_plus_project_endpoint_kernel_streaming_core",
+        "release_status": "streaming_core_delivered_real_actuation_disabled"
+      },
+      "ARHT": {
+        "canonical_source": "../../offline_benchmark/offline_src/phase_benchmark/ARHT.py",
+        "source_sha256": "d29f8dcd436f674d569efd519a88edb4cce1f6d5976129a866bcbe0371da4104",
+        "declared_origin_url": "https://github.com/OpitzLab/CL-phase",
+        "adaptation": "slow-oscillation engineering adaptation; not an exact upstream reproduction",
+        "upstream_commit": null,
+        "license": null,
+        "reuse_boundary": "independent_rewrite_evidence_not_yet_complete",
+        "release_status": "blocked"
+      }
+    },
+    "pll_naming_disambiguation": {
+      "note": "the offline benchmark configuration also exposes a reduced PLL implementation under the method name 'ferster_pll'; it is a different implementation and must never stand in for the canonical PLL oracle (method name 'pll')",
+      "simplified_pll_may_represent_canonical_pll": false
+    },
+    "project_level_license_present": false
+  },
+  "phase_convention": {
+    "storage_unit": "radian",
+    "normalization_interval": "[-pi,pi)",
+    "reference_definition": "angle(x + i*hilbert_transform(x))",
+    "zero_phase_definition": "positive_peak_of_Fpz_minus_Cz",
+    "theta_target_default_rad": 0.0,
+    "theta_target_runtime_configurable": true,
+    "target_grid_rad": [
+      0.0,
+      0.7853981633974483,
+      1.5707963267948966,
+      2.356194490192345,
+      -3.141592653589793,
+      -2.356194490192345,
+      -1.5707963267948966,
+      -0.7853981633974483
+    ],
+    "fields": {
+      "theta_target": "user-selected physiological Hilbert target",
+      "theta_internal": "target after subtracting estimator phase offset",
+      "theta_command": "target after subtracting scheduler and acoustic delays",
+      "phi_ref_at_acoustic_onset": "offline reference phase at measured acoustic onset"
+    },
+    "equations": {
+      "theta_internal": "wrap(theta_target - estimator_phase_offset)",
+      "theta_command": "wrap(theta_internal - 2*pi*f_hat*scheduler_prediction_horizon_s - 2*pi*f_hat*acoustic_output_delay_s)",
+      "evaluation_error": "wrap(phi_ref_at_acoustic_onset - theta_target)"
+    },
+    "compensation_policy": {
+      "estimator_phase_offset_applications": 1,
+      "scheduler_prediction_horizon_applications": 1,
+      "acoustic_output_delay_applications": 1,
+      "duplicate_compensation_is_contract_error": true
+    }
+  },
+  "scoped_contracts": {
+    "causal_cecht": {
+      "authority": "standalone_scoped_machine_contract",
+      "contract_id": "clas-causal-cecht-phase-v1",
+      "path": "../../causal_phase_tracking/causal_cecHT/contracts/causal_cecht_phase_contract.json",
+      "scope": [
+        "causal_cecht_streaming_estimates",
+        "causal_cecht_pseudo_trigger",
+        "causal_cecht_simulation_evaluation"
+      ],
+      "shared_fields_must_match": [
+        "signal",
+        "numeric_unit",
+        "polarity",
+        "phase_convention",
+        "target_phase"
+      ],
+      "conflict_policy": "fail_and_require_owner_decision",
+      "method_scoped_sampling_rate_hz": 250.0,
+      "overrides_global_common_analysis_rate": true,
+      "update_grid_hz": 250.0,
+      "update_interval_samples": 1,
+      "alternative_or_sensitivity_update_grids": [],
+      "crossing_direction": "positive_only",
+      "reverse_crossing_recorded": false,
+      "amplitude_eligibility_enabled": false,
+      "real_actuation_enabled": false,
+      "status": "development_selection_produced_acceptance_pending",
+      "streaming_core_implemented": true,
+      "pseudo_trigger_implemented": true,
+      "refractory_s_dev_placeholder": 0.5,
+      "rate_adapter_implemented": true,
+      "edf_replay_implemented": true,
+      "offline_reference_implemented": true,
+      "host_wrapper_implemented": true,
+      "resampler_inside_estimator": false,
+      "owner_model": "single_owner_non_reentrant",
+      "hot_output": "caller_owned_fixed_numeric_buffers",
+      "cold_output": "formal_14_field_records_when_metadata_exists",
+      "supported_input_dtypes": [
+        "float32",
+        "float64"
+      ],
+      "development_selection_status": "selection_produced_acceptance_pending",
+      "selected_development_candidate": {
+        "calibration": "calibrated",
+        "window_s": 8.0,
+        "window_samples": 2000,
+        "f0_hz": 0.8
+      },
+      "development_selection_validation_subject_mean_mae_rad": 1.0351,
+      "development_selection_validation_bootstrap_ci95_rad": [
+        0.9568,
+        1.1134
+      ],
+      "development_selection_default_target_worst_hit_rate": 0.2661,
+      "acceptance_threshold_preregistered": false,
+      "host_plugin_implemented": true,
+      "plugin_release_record": "see host_plugin_release.plugins[0]"
+    }
+  },
+  "target_update": {
+    "application_boundary": "declared_block_or_sample_boundary",
+    "atomic": true,
+    "required_identity_fields": [
+      "config_version",
+      "effective_segment_id",
+      "effective_sample_index"
+    ],
+    "clear_crossing_comparator": true,
+    "cancel_old_pending_intents": true,
+    "replay_old_crossing_after_update": false,
+    "acceptance_model": "target_grid_results_plus_worst_degradation_not_absolute_invariance"
+  },
+  "host_plugin_release": {
+    "deployed_plugin_count": 1,
+    "planned_plugin_count": 2,
+    "plugins": [
+      {
+        "estimator_id": "cecHT",
+        "plugin_file_name": "PhaseTracking_cecHT.py",
+        "gui_label": "PhaseTracking_cecHT",
+        "canonical_source": "../../realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT_wrapper.py",
+        "canonical_source_sha256": "0cb5b04836a46708aa4792749c9ab55ea5aa2b419c9b09d955c2c3ef6fc0427c",
+        "build_script": "../../realtime_deployment/deploy/PhaseTracking_cecHT/build_PhaseTracking_cecHT.py",
+        "checked_in_build_artifact": "../../realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT.py",
+        "checked_in_build_artifact_sha256": "4e5e2db668d57342ea3ba60928279a623b6633888eaf2ca3ce86d05d5f51ef58",
+        "rebuild_preserves_the_gui_label": true,
+        "verify_status": "passed; the latest run and its callback cost are recorded in Plugin_Build_Verify_Deploy.md",
+        "verify_report": "../../realtime_deployment/deploy/PhaseTracking_cecHT/Plugin_Build_Verify_Deploy.md",
+        "return_contract": "input_block_returned_unchanged_same_shape",
+        "phase_visibility": "latest_phase_and_phase_history_ring_buffer_plus_load_reset_side_channel_log",
+        "phase_ring_samples": 2500,
+        "warmup_s": 8.0,
+        "max_block_samples": 1024,
+        "real_actuation_enabled": false
+      }
+    ],
+    "second_plugin_plan": "pll"
+  },
+  "input": {
+    "formal_block_type": "phase_tracking_block_v1",
+    "analysis_sampling_rate_hz": 100.0,
+    "method_sampling_rates_hz": {
+      "pll": 100.0,
+      "cecHT": 250.0,
+      "ARHT": 100.0
+    },
+    "signal": "Fpz-Cz",
+    "numeric_unit": "uV",
+    "sample_dtype": "floating",
+    "polarity": "Fpz_minus_Cz",
+    "required_metadata": [
+      "segment_id",
+      "absolute_sample_index",
+      "acquisition_timestamp_s",
+      "sampling_rate_hz",
+      "numeric_unit",
+      "channel_identity",
+      "polarity"
+    ],
+    "variable_chunk_sizes_allowed": true,
+    "resampling_inside_each_estimator": false,
+    "rate_mismatch_policy": "fail_closed_then_explicit_upstream_rate_adapter_gate"
+  },
+  "streaming_contract": {
+    "strictly_causal": true,
+    "future_sample_access_allowed": false,
+    "state_persists_across_legal_chunks": true,
+    "arbitrary_legal_chunking_must_preserve_outputs": true,
+    "estimator_contract_includes": [
+      "causal_filtering",
+      "past_only_scaling",
+      "estimator_state",
+      "buffer_readiness",
+      "warmup",
+      "reset"
+    ],
+    "fault_inputs": [
+      "segment_change",
+      "sample_gap",
+      "out_of_order_sample",
+      "duplicate_sample",
+      "NaN",
+      "Inf",
+      "sampling_rate_unknown",
+      "sampling_rate_mismatch",
+      "unit_unknown",
+      "unit_mismatch",
+      "channel_unknown",
+      "channel_mismatch",
+      "polarity_unknown",
+      "polarity_mismatch",
+      "explicit_reset"
+    ],
+    "fault_response": [
+      "invalidate_current_phase",
+      "clear_affected_filter_scaler_estimator_and_crossing_state",
+      "cancel_pending_logical_intent",
+      "restart_method_specific_readiness",
+      "record_reason"
+    ],
+    "old_phase_carry_forward_when_invalid": false
+  },
+  "common_output": {
+    "update_position": "per_sample_or_preregistered_method_update_grid",
+    "required_fields": [
+      "method_id",
+      "parameter_version",
+      "config_version",
+      "segment_id",
+      "sample_index",
+      "acquisition_timestamp_s",
+      "phase_rad",
+      "amplitude",
+      "frequency_hz",
+      "valid",
+      "ready",
+      "invalid_reason",
+      "estimate_time_position",
+      "compensation_applied"
+    ],
+    "invalid_numeric_estimates_are_null": true,
+    "invalid_estimate_may_generate_trigger": false
+  },
+  "benchmark_v2": {
+    "fine_grained_definitions": "see the cecHT experiment contract (../../experiment_evidence/cecht/cecHT_HANDOFF.md, section B) for the data source and the development set, the offline reference definition, the alignment rule, the ready endpoint, the pseudo-event definition, the target grid, the estimator configuration, the aggregation and the uncertainty settings",
+    "single_subject_single_night_role": "smoke_test_and_development_only",
+    "split_isolation_axes": [
+      "subject",
+      "night"
+    ],
+    "development_only_operations": [
+      "parameter_selection",
+      "past_only_scaler_selection",
+      "per_night_calibration",
+      "target_sweep",
+      "acceptance_threshold_selection"
+    ],
+    "development_manifest_status": "generated_2026_09_11_evaluation_manifest_20_nights_selection_pending_acceptance",
+    "untouched_test_manifest_status": "not_yet_frozen",
+    "preregistered_split": {
+      "smoke_infrastructure_only_nights": [
+        "SC4001E0",
+        "SC4002E0"
+      ],
+      "development": "SC4011E0-SC4102E0 (subjects 01-10, two nights each, 20 nights)",
+      "untouched_test": "SC4111E0-SC4202E0 (subjects 11-20, two nights each, 20 nights)",
+      "reserve_not_to_be_opened": "SC4211E0 onwards",
+      "n3_definition": "Stage 3 and Stage 4 pooled",
+      "per_night_segments": "3 x 180 s from the middle of the longest Stage 4 block, at least 30 min apart",
+      "night_admission": "at least 3 continuous N3 blocks of at least 180 s"
+    },
+    "untouched_test_results_may_be_opened": false,
+    "replay_mode": "continuous_full_night_pseudorealtime",
+    "reset_at_30_second_epoch_boundaries": false,
+    "shared_across_methods": [
+      "input",
+      "eligibility",
+      "time_at_risk",
+      "trigger_policy"
+    ],
+    "sensitivity_reference": {
+      "name": "Ferster_named_sensitivity_only",
+      "band_hz": [
+        0.5,
+        4.0
+      ],
+      "filter_family": "Chebyshev_II",
+      "application": "zero_phase",
+      "analytic_signal": "Hilbert"
+    },
+    "report_estimator_and_trigger_policy_metrics_separately": true,
+    "statistical_unit": "subject_night",
+    "pooled_triggers_are_independent_statistical_units": false,
+    "threshold_preregistration": {
+      "source": "development_only_results_plus_engineering_budget",
+      "project_owner_approval_required": true,
+      "status": "pending"
+    },
+    "required_scientific_metrics": [
+      "circular_bias",
+      "circular_SD",
+      "PLV_or_resultant_length",
+      "CMAE",
+      "mean_absolute_error",
+      "median_absolute_error",
+      "coverage",
+      "target_grid_results",
+      "worst_target_degradation"
+    ],
+    "required_engineering_metrics": [
+      "warmup",
+      "readiness_coverage",
+      "failure_rate",
+      "chunk_parity",
+      "reset_gap_rate_change_behavior",
+      "callback_runtime_p50_p95_p99_max",
+      "deadline_miss",
+      "eight_instance_sustained_runtime",
+      "memory_growth",
+      "long_term_stability"
+    ],
+    "required_trigger_policy_metrics": [
+      "eligible_time_coverage",
+      "trigger_rate",
+      "false_triggers_per_minute",
+      "missed_opportunity",
+      "refractory_behavior",
+      "pending_intent_cancellation",
+      "predicted_vs_measured_acoustic_onset_error"
+    ]
+  },
+  "known_open_defects": [
+    "pll_offline_oracle_uses_whole_segment_scaling_that_cannot_be_causal",
+    "shared_trigger_and_ARHT_use_whole_segment_amplitude_percentile_and_leak_future_data",
+    "AR_endpoint_and_time_label_offset",
+    "migrated_runner_import_and_data_discovery_defects_in_the_delivered_tree",
+    "the_reduced_offline_benchmark_pll_must_not_replace_the_canonical_pll_oracle",
+    "ARHT_remains_an_offline_trailing_window_simulator"
+  ],
+  "safety_and_release": {
+    "all_planned_stages_are_shadow_only": true,
+    "technical_validity_continuity_reset_warmup_refractory_and_pending_cancel_are_required": true,
+    "full_physiological_control_gate_required_for_estimator_only_benchmark": false,
+    "full_physiological_control_gate_required_before_future_real_stimulation": true,
+    "callback_file_io_allowed": false,
+    "release_requires": [
+      "canonical_source",
+      "deployed_copy_sha256",
+      "dependency_manifest",
+      "parameter_manifest",
+      "known_good_passthrough_probe",
+      "rollback_steps",
+      "source_license_and_attribution_audit"
+    ],
+    "physical_acoustic_onset_and_soundcard_jitter_milestone": "separate_future_HIL_and_safety_milestone"
+  },
+  "acceptance_status": {
+    "overall_status": "not_complete_remaining_items_recorded",
+    "satisfied_by_this_contract": [
+      "planned_stage_list_recorded",
+      "default_target_zero_positive_peak_and_configurable_target",
+      "pll_and_ARHT_100Hz_analysis_clock",
+      "causal_cecht_exact_250Hz_method_scoped_override",
+      "three_estimator_roles_and_two_host_menu_roles",
+      "no_new_GUI_current_scope",
+      "existing_host_interface_only_current_scope",
+      "common_streaming_contract",
+      "benchmark_v2_protocol",
+      "shadow_only_boundary",
+      "known_open_defect_list"
+    ],
+    "closed_since_effective_date": [
+      "cecHT_upstream_commit_license_and_copy_boundary"
+    ],
+    "pending": [
+      "untouched_test_manifest_and_hash_freeze",
+      "project_owner_approved_numeric_preregistration_table",
+      "pll_and_ARHT_upstream_commits_licenses_and_copy_rewrite_boundaries"
+    ]
+  }
+}

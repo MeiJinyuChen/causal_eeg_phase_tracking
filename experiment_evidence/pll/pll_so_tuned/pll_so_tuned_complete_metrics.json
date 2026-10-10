@@ -1,0 +1,76 @@
+{
+  "config": {
+    "fs_hz": 100.0,
+    "withheld": "This package is the result of a research internship in industry; the classic PLL module and its frozen tuning parameters are not included in this distribution for intellectual-property reasons.",
+    "warmup_s": 8.0,
+    "refractory_s": 0.5
+  },
+  "estimator": {
+    "circular_bias_rad": 1.7222253895117678,
+    "resultant_length": 0.326318873589519,
+    "circular_sd_rad": 1.4965829317731367,
+    "mean_abs_wrapped_error_rad": 1.6338638504400764,
+    "median_abs_wrapped_error_rad": 1.6467091339884439,
+    "q95_abs_wrapped_error_rad": 2.9624252473486377,
+    "hit_30": 0.11855523255813953,
+    "hit_45": 0.1906124031007752,
+    "catastrophic_rate_gt_135deg": 0.23659883720930233,
+    "sample_count": 1032000
+  },
+  "estimator_without_phase_offset": {
+    "circular_bias_rad": -0.4140576104882324,
+    "resultant_length": 0.326318873589519,
+    "circular_sd_rad": 1.4965829317731367,
+    "mean_abs_wrapped_error_rad": 1.1916364599697506,
+    "median_abs_wrapped_error_rad": 1.0003262278172458,
+    "q95_abs_wrapped_error_rad": 2.854959141820921,
+    "hit_30": 0.27854457364341084,
+    "hit_45": 0.4058032945736434,
+    "catastrophic_rate_gt_135deg": 0.1391656976744186,
+    "sample_count": 1032000,
+    "note": "raw PLL internal phase without historical phase_offset"
+  },
+  "subject_level": {
+    "subject_count": 13,
+    "subject_mean_mae_rad": 1.6315999173276443,
+    "subject_mae_bootstrap_95ci": [
+      1.5714280780869563,
+      1.6944914573364727
+    ]
+  },
+  "events": {
+    "hit_30": 0.1897451598524243,
+    "hit_45": 0.3066599538163924,
+    "circular_bias_rad": -0.9900797948698062,
+    "median_absolute_timing_error_s": 0.20998619743762467,
+    "event_count": 8979
+  },
+  "internal_state": {
+    "estimated_frequency_mean_hz": 0.8193708728774831,
+    "estimated_frequency_sd_hz": 0.5084493396990387,
+    "estimated_frequency_jitter_hz": 0.05501065634369364,
+    "fraction_abs_freq_minus_fc_gt_0p2": 0.6382587209302325,
+    "control_mean": -0.0021988777822331356,
+    "control_sd": 0.19861302331993697
+  },
+  "cecht_fixed_baseline_mae_rad": 0.9765686703548084,
+  "cecht_local_oracle_mae_rad": 0.6305917918991326,
+  "delta_vs_cecht_fixed": {
+    "delta_mae_rad": -0.657295180085268,
+    "delta_q95_rad": -0.2831279550016772,
+    "delta_resultant_length": -0.13868477319518674,
+    "delta_hit_30": -0.2150734427439852,
+    "delta_hit_45": -0.28783460975939085,
+    "delta_catastrophic_rate": 0.13835112203988767
+  },
+  "fraction_of_fixed_to_oracle_gap_closed": -1.8998240085268476,
+  "subjects_improved_vs_cecht": 0,
+  "subjects_worsened_vs_cecht": 13,
+  "isolation": {
+    "main_code_modified": "NO",
+    "production_config_modified": "NO",
+    "untouched_test_accessed": "NO",
+    "verdict": "BASELINE_ONLY"
+  },
+  "wall_clock_seconds": 105.25984150002478
+}

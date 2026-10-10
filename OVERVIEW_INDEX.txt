@@ -1,0 +1,173 @@
+PhaseTracking overview index
+================================================================
+
+How this repository is laid out:
+
+  causal_phase_tracking\    the online algorithms and their evaluation
+    causal_cecHT\           the causal streaming cecHT core: streaming_core.py,
+                            pseudo_trigger.py, the scoped machine contract under
+                            contracts\, the unit tests, and the byte-identical
+                            upstream snapshot under vendor\
+    causal_simulation_evaluation\
+                            offline replay and evaluation: EDF replay,
+                            resampling, the non-causal reference phase, metrics,
+                            the frozen synthetic goldens and manifests, and their
+                            tests
+  realtime_deployment\      host-side deployment: the project-level machine
+                            contract under contracts\, and the host plugin under
+                            deploy\PhaseTracking_cecHT\ (wrapper, build script,
+                            generated single-file plugin, verification script,
+                            deployment manual, host probes and run evidence)
+  offline_benchmark\        the offline phase-tracking comparison (isolation
+                            area; no online path may import it). It ships one
+                            Sleep-EDF record under data\, so it runs as
+                            delivered; see its README
+  experiment_evidence\      the runner and the output of every offline
+                            experiment; see its README for the reading order
+  docs_and_contracts\       the four documents listed in section 1
+  code\README.md            a signpost to the real code locations; the earlier
+                            five-layer layout it used to describe no longer exists
+  requirements.txt, pyproject.toml, setup.py
+                            dependencies and packaging
+  conftest.py               pytest path setup for the repository root
+  OVERVIEW_INDEX.txt        this file
+
+----------------------------------------------------------------
+1. The five documents
+----------------------------------------------------------------
+
+1) docs_and_contracts\PhaseTracking_Overview.md  [overview]
+   Includes: what the product requires, the overall closed-loop neuromodulation
+   architecture, the comparative conclusions for the three offline methods, how
+   far the work has progressed, where the error comes from, and the roadmap for
+   later optimization and productization.
+   Excludes: the frozen parameter tables and the individual metric numbers.
+
+2) docs_and_contracts\cecHT_Experiment_Contract.md  [experimental evidence]
+   Includes: how the evaluation protocol itself was fixed - the dataset and its
+   segmentation, the offline reference phase and the alignment rules, the ready
+   endpoint, the metric definitions, the bootstrap settings, the canonical
+   baseline, the conclusions and the decision log of each stage, and the
+   references used.
+   Excludes: product requirements and deployment steps.
+
+3) docs_and_contracts\causal_cecHT_Method_Contract.json  [method-level machine contract]
+   Includes: what belongs to this method alone - the input and the sampling
+   rate, the phase convention, the interface and output buffers of the streaming
+   core, the status-code and reason-code enums, the output fields, the fault and
+   reset semantics, and the target-phase update rule.
+   Excludes: anything that spans methods or concerns the host.
+   A byte-identical copy sits at
+   causal_phase_tracking\causal_cecHT\contracts\causal_cecht_phase_contract.json,
+   and the relative paths inside the file resolve from that contracts\ directory.
+
+4) realtime_deployment\contracts\phase_tracking.json  [project-level machine contract]
+   Includes: the cross-method and host-level content - naming and stages, origin
+   and license, host-interface facts, the hashes and verification record of the
+   deployed plugin, the key points of the benchmark protocol, the safety
+   boundary, and the acceptance status.
+   Excludes: method-internal implementation details (those are in 3).
+
+5) realtime_deployment\deploy\PhaseTracking_cecHT\Plugin_Build_Verify_Deploy.md
+   [deployment manual]
+   Includes: how to build, verify, deploy and roll back, the frozen-configuration
+   quick reference, and what the plugin does and does not do. Explanatory
+   discussion points to 1 and 4 and is not repeated.
+   A byte-identical copy sits in docs_and_contracts\.
+
+----------------------------------------------------------------
+2. Index by topic
+----------------------------------------------------------------
+
+A bare file name below is one of the four documents under docs_and_contracts\;
+every other path is relative to the repository root.
+
+Product goals and requirements .......... PhaseTracking_Overview.md, chapter 1
+Comparative conclusions, three offline methods
+                                         PhaseTracking_Overview.md, chapter 2
+Evaluation protocol, metric definitions, bootstrap settings
+                                         cecHT_Experiment_Contract.md
+Canonical baseline and per-stage conclusions
+                                         cecHT_Experiment_Contract.md
+Frozen parameters (window, f0, band, target, refractory)
+                                         realtime_deployment\contracts\phase_tracking.json
+                                         field: host_plugin_release
+Host-interface content (instance count, missing metadata, reset, circuit breaker)
+                                         realtime_deployment\contracts\phase_tracking.json
+                                         fields: input / streaming_contract
+Hashes and verification record of the deployed plugin
+                                         realtime_deployment\contracts\phase_tracking.json
+                                         (the numbers of the latest check are in 5)
+Method-internal fields, enums, fault semantics
+                                         causal_cecHT_Method_Contract.json
+Build, verify, deploy, rollback steps ... Plugin_Build_Verify_Deploy.md (5)
+What data each experiment uses and what it concludes
+                                         experiment_evidence\cecht\, and
+                                         experiment_evidence\cecht\cecHT_HANDOFF.md
+What the online algorithm runs, interface and state machine
+                                         causal_phase_tracking\causal_cecHT\
+What the offline benchmark runs and how to rerun it
+                                         offline_benchmark\README.md
+Plugin generation from source ........... realtime_deployment\deploy\PhaseTracking_cecHT\
+
+----------------------------------------------------------------
+3. Suggested reading order
+----------------------------------------------------------------
+
+Step 1   This file. Build the map of "which file is responsible for what" in
+         two minutes.
+Step 2   PhaseTracking_Overview.md, chapters 1 to 3. Understand what the product
+         requires, what the algorithm is, and where to look when a parameter has
+         to change.
+Step 3   cecHT_Experiment_Contract.md. The evaluation protocol, the baseline and
+         the per-stage conclusions; this is the only source of the evaluation
+         numbers.
+Step 4   The two contracts: realtime_deployment\contracts\phase_tracking.json
+         first, then causal_cecHT_Method_Contract.json. The former governs
+         delivery and integration, the latter the method-internal fields and the
+         state machine.
+Step 5   experiment_evidence\README.md, then the summary.md of each subdirectory
+         and the corresponding figures, following the tables in it.
+Step 6   realtime_deployment\deploy\PhaseTracking_cecHT\
+         Plugin_Build_Verify_Deploy.md. Read it when you need to build, verify
+         or roll back on the real host.
+Step 7   offline_benchmark\README.md. Read it before rerunning the offline
+         comparison.
+
+----------------------------------------------------------------
+4. Five reading reminders
+----------------------------------------------------------------
+
+- The only source of evaluation numbers is cecHT_Experiment_Contract.md; the
+  numbers of the latest real-host check are in Plugin_Build_Verify_Deploy.md.
+  All other documents give conclusions only, so that one number never has
+  several versions.
+- The two .json files are machine contracts: use them to compare field by field
+  when writing code or accepting the delivery, rather than reading them from
+  cover to cover. Look a field up when you need its exact definition.
+- This repository contains no conclusion about stimulation authorization: the
+  current implementation only estimates phase and issues pseudo-triggers; it
+  does not deliver real stimulation.
+- The canonical classic PLL is not shipped: that module is the result of a
+  research internship in industry and is withheld for intellectual-property
+  reasons, so its parameters and results appear as empty or withheld fields (see
+  experiment_evidence\README.md and offline_benchmark\README.md).
+- Data paths: the runners under experiment_evidence\ read the CLAS_SLEEP_EDF_ROOT
+  environment variable and fall back to the relative placeholder directory
+  physionet-sleep-data when it is unset; offline_benchmark\ uses
+  PHASE_BENCHMARK_DATA_DIR and ships its own record under data\, so it runs as
+  delivered. Set the variable before rerunning; no code change is needed.
+
+================================================================
+
+Appendix: two names for the same method contract
+----------------------------------------------------------------
+
+The method-level machine contract exists twice, byte for byte:
+
+  docs_and_contracts\causal_cecHT_Method_Contract.json
+  causal_phase_tracking\causal_cecHT\contracts\causal_cecht_phase_contract.json
+
+Contracts and modules refer to it by the second name, and the relative paths
+inside the file resolve from the contracts\ directory above.
+================================================================

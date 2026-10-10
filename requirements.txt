@@ -1,0 +1,13 @@
+# PhaseTracking runtime dependencies.
+#
+# Install everything with:
+#     python -m pip install -r requirements.txt
+#
+# numpy, scipy      streaming cecHT core, offline reference, plugin build
+# pandas, matplotlib offline benchmark tables and figures
+# mne               reads the Sleep-EDF recordings used by the offline benchmark
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+matplotlib>=3.7
+mne>=1.5

@@ -1,0 +1,679 @@
+{
+  "contract_id": "clas-causal-cecht-phase-v1",
+  "schema_version": 1,
+  "status": "development_selection_produced_and_host_plugin_deployed_acceptance_pending",
+  "previous_status": "edf replay and offline reference implemented",
+  "approved_date": "2026-08-06",
+  "implementation_updated_date": "2026-09-18",
+  "authority": {
+    "mode": "standalone_scoped_machine_contract",
+    "scope": [
+      "causal_cecht_streaming_estimates",
+      "causal_cecht_pseudo_trigger",
+      "causal_cecht_simulation_evaluation"
+    ],
+    "global_contract_path": "../../../realtime_deployment/contracts/phase_tracking.json",
+    "conflict_policy": "fail_and_require_owner_decision",
+    "may_weaken_project_safety_constraints": false
+  },
+  "implementation_status": {
+    "contract_definition": "written first; no algorithm code was changed",
+    "upstream_pinning_and_endpoint_characterization": "complete",
+    "synthetic_fixed_window_math_characterization": "complete",
+    "fault_safe_250hz_host_independent_streaming_core": "complete",
+    "independent_positive_crossing_pseudo_trigger": "complete",
+    "causal_100_to_250_adapter_edf_replay_and_offline_reference": "complete",
+    "development_only_parameter_selection": "candidate produced, acceptance pending",
+    "untouched_test_evaluation": "not started",
+    "real_stimulation_refractory_selection": "deferred to the real-stimulation handover"
+  },
+  "contract_decisions": [
+    {
+      "decision": "contract authority",
+      "choice": "a standalone machine contract scoped to the causal cecHT method"
+    },
+    {
+      "decision": "default target phase and evaluation grid",
+      "choice": "0 rad by default, evaluated on the eight point grid around the circle"
+    },
+    {
+      "decision": "error sign convention",
+      "choice": "estimate minus reference for the estimator error, reference minus target for the trigger error"
+    },
+    {
+      "decision": "input unit",
+      "choice": "microvolt"
+    },
+    {
+      "decision": "update grid at the time of writing",
+      "choice": "every sample at 100 Hz; replaced later by the 250 Hz rebaseline recorded below"
+    },
+    {
+      "decision": "reverse crossing diagnostic",
+      "choice": "disabled"
+    },
+    {
+      "decision": "amplitude eligibility",
+      "choice": "disabled for the first estimator and trigger version"
+    },
+    {
+      "decision": "delivered artifacts",
+      "choice": "written notes, the machine contract and its tests"
+    },
+    {
+      "decision": "may this method contract change the project level contract",
+      "choice": "yes"
+    },
+    {
+      "decision": "automatic commits",
+      "choice": "not used"
+    }
+  ],
+  "streaming_core_decisions": [
+    {
+      "decision": "where the heavy maths runs",
+      "choice": "once in the constructor; the steady state only applies a precomputed endpoint kernel"
+    },
+    {
+      "decision": "core boundary",
+      "choice": "reset, fault and prefix behaviour are handled inside the core from the start"
+    },
+    {
+      "decision": "hot path interface",
+      "choice": "caller owned output buffers with a scalar status code"
+    },
+    {
+      "decision": "sampling rate boundary at the time of writing",
+      "choice": "exactly 100 Hz with no resampler inside the core; replaced later by the 250 Hz rebaseline"
+    },
+    {
+      "decision": "metadata layering",
+      "choice": "a small relative context on the hot path and formal records on the cold path"
+    },
+    {
+      "decision": "fault semantics",
+      "choice": "three separate outcomes: epoch restart, stream fault and structural reject"
+    },
+    {
+      "decision": "timestamp field name",
+      "choice": "acquisition_timestamp_s"
+    },
+    {
+      "decision": "performance evidence",
+      "choice": "workstation characterisation only, with no target deadline claim"
+    },
+    {
+      "decision": "file scope",
+      "choice": "core, tests and contracts only"
+    }
+  ],
+  "pseudo_trigger_decisions": [
+    {
+      "decision": "trigger scope",
+      "choice": "an independent trigger that consumes only valid and ready phase samples"
+    },
+    {
+      "decision": "default target phase",
+      "choice": "0 rad, configurable at runtime"
+    },
+    {
+      "decision": "crossing detection",
+      "choice": "positive crossings only, with linear interpolation between adjacent valid samples"
+    },
+    {
+      "decision": "refractory period",
+      "choice": "0.5 s development placeholder; the value for real stimulation was later deferred to the stimulation handover"
+    },
+    {
+      "decision": "amplitude gate",
+      "choice": "disabled"
+    },
+    {
+      "decision": "latency compensation",
+      "choice": "all terms zero; the decision time is not claimed to be an acoustic onset"
+    },
+    {
+      "decision": "event times",
+      "choice": "both the estimated crossing time and the decision time are recorded"
+    }
+  ],
+  "evaluation_decisions": [
+    {
+      "decision": "adapter engine",
+      "choice": "a stateful rational polyphase FIR resampler"
+    },
+    {
+      "decision": "kernel specification",
+      "choice": "a fixed windowed FIR design, 40 Hz cutoff, 33 taps, designed in the 500 Hz domain"
+    },
+    {
+      "decision": "delay semantics",
+      "choice": "report the group delay instead of shifting samples inside the adapter"
+    },
+    {
+      "decision": "fault and reset behaviour",
+      "choice": "clear the delay line, invalidate the estimate, restart warm-up and never interpolate across the fault"
+    },
+    {
+      "decision": "chunk patterns",
+      "choice": "one fixed pattern plus one seeded irregular pattern"
+    },
+    {
+      "decision": "EDF loading",
+      "choice": "read the full channel first and slice afterwards"
+    },
+    {
+      "decision": "reference filter",
+      "choice": "Butterworth band-pass applied with a zero phase filter, then the Hilbert transform"
+    },
+    {
+      "decision": "leakage checks",
+      "choice": "prefix replay, future chunk injection and guard sensitivity checks"
+    },
+    {
+      "decision": "smoke scope",
+      "choice": "the default target only"
+    },
+    {
+      "decision": "file scope",
+      "choice": "the evaluation side only"
+    },
+    {
+      "decision": "pre-read quality control",
+      "choice": "a formal quality manifest is written before any metric is read"
+    },
+    {
+      "decision": "performance scope",
+      "choice": "workstation only"
+    }
+  ],
+  "sampling_rate_rebaseline": {
+    "approved_date": "2026-08-07",
+    "owner_decision": "exactly 250 Hz, every sample, 6 s window",
+    "supersedes": {
+      "earlier update grid decision": "every sample at 100 Hz",
+      "earlier sampling rate decision": "exactly 100 Hz with no resampler"
+    },
+    "effective_sampling_rate_hz": 250.0,
+    "sample_interval_s": 0.004,
+    "window_duration_s": 6.0,
+    "primary_profile": {
+      "window_samples": 1500,
+      "n_fft": 1500,
+      "fft_mode": "exact"
+    },
+    "secondary_profile": {
+      "window_samples": 1501,
+      "n_fft": null,
+      "fft_mode": "fast",
+      "expected_resolved_n_fft": 1512
+    },
+    "resampler_implemented_in_evaluation_path": true,
+    "resampler_implemented_in_host_plugin": false,
+    "non_250_input_policy_core": "fail_closed_sampling_rate_mismatch",
+    "non_250_input_policy_host_plugin": "degrade_to_same_shape_passthrough_and_record_degrade_reason"
+  },
+  "window_rebaseline": {
+    "approved_date": "2026-09-15",
+    "owner_decision": "exactly 250 Hz, every sample, 8 s window",
+    "supersedes": {
+      "window_duration_s": 6.0,
+      "primary_profile": {
+        "window_samples": 1500,
+        "n_fft": 1500
+      },
+      "secondary_profile": {
+        "window_samples": 1501,
+        "n_fft": null,
+        "expected_resolved_n_fft": 1512
+      },
+      "f0_hz": 0.875
+    },
+    "effective_sampling_rate_hz": 250.0,
+    "sample_interval_s": 0.004,
+    "window_duration_s": 8.0,
+    "primary_profile": {
+      "window_samples": 2000,
+      "n_fft": 2000,
+      "fft_mode": "exact"
+    },
+    "secondary_profile": {
+      "window_samples": 2001,
+      "n_fft": null,
+      "fft_mode": "fast",
+      "expected_resolved_n_fft": 2016
+    },
+    "calibration": {
+      "calibrate": true,
+      "f0_hz": 0.8
+    },
+    "deployed_profile": "primary_profile",
+    "rationale": "The canonical cecHT development baseline and the deployed host plugin both use an 8 s window (2000 samples at 250 Hz) with n_fft = N and f0 = 0.8 Hz; the window and f0 were selected on development data.",
+    "evidence": [
+      "../../../experiment_evidence/cecht/cecHT_HANDOFF.md: canonical baseline 8 s / f0 = 0.8 Hz, pooled MAE 1.041248 rad",
+      "realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT_wrapper.py: DEPLOY_WINDOW_S = 8.0, DEPLOY_WINDOW_SAMPLES = 2000, DEPLOY_N_FFT = 2000, DEPLOY_F0_HZ = 0.8"
+    ],
+    "regression_assets_still_on_superseded_profile": [
+      "causal_simulation_evaluation/goldens/cecht_synthetic_goldens.json",
+      "causal_simulation_evaluation/manifests/cecht_synthetic_cases.json",
+      "causal_cecHT/tests/test_endpoint_kernel.py",
+      "causal_simulation_evaluation/tests/test_cecht_synthetic_math.py",
+      "causal_simulation_evaluation/run_smoke_evaluation.py"
+    ],
+    "migration_status": "pending_regression_refreeze",
+    "non_250_input_policy": "fail_closed_sampling_rate_mismatch"
+  },
+  "development_selection": {
+    "status": "selection_produced_acceptance_pending",
+    "data_scope": "development nights only; the untouched test nights stay unread",
+    "selected_candidate": {
+      "calibration": "calibrated",
+      "window_s": 8.0,
+      "window_samples": 2000,
+      "f0_hz": 0.8
+    },
+    "validation_subject_mean_mae_rad": 1.0351,
+    "validation_bootstrap_ci95_rad": [
+      0.9568,
+      1.1134
+    ],
+    "validation_default_target_worst_hit_rate": 0.2661,
+    "acceptance_threshold_preregistered": false,
+    "untouched_test_manifest_frozen": false,
+    "artifacts": [
+      "causal_phase_tracking/causal_simulation_evaluation/artifacts/development_selection.json"
+    ]
+  },
+  "host_plugin": {
+    "implemented": true,
+    "plugin_file_name": "PhaseTracking_cecHT.py",
+    "canonical_source": "../../../realtime_deployment/deploy/PhaseTracking_cecHT/PhaseTracking_cecHT_wrapper.py",
+    "verify_status": "passed; the latest run is recorded in the plugin README",
+    "warmup_s": 8.0,
+    "phase_visibility": "in_memory_ring_buffer_only",
+    "return_contract": "input_block_returned_unchanged_same_shape",
+    "real_actuation_enabled": false,
+    "release_record": "../../../realtime_deployment/contracts/phase_tracking.json"
+  },
+  "input": {
+    "sampling_rate_hz": 250.0,
+    "sample_interval_s": 0.004,
+    "signal": "Fpz-Cz",
+    "edf_channel": "EEG Fpz-Cz",
+    "numeric_unit": "uV",
+    "polarity": "Fpz_minus_Cz",
+    "sample_dtype": "floating"
+  },
+  "streaming_core": {
+    "module": "causal_phase_tracking.causal_cecHT.streaming_core",
+    "role": "host_independent_250hz_fault_safe_core",
+    "sampling_rate_hz": 250.0,
+    "resampler_inside_core": false,
+    "owner_model": "single_owner_non_reentrant",
+    "eight_channels_require_independent_instances": true,
+    "endpoint_engine": {
+      "construction": "pinned_ECHT_fit_then_endpoint_kernel_derivation",
+      "steady_state": "one_or_two_np_dot_calls_into_preallocated_0d_scratch",
+      "pinned_transform_or_fft_in_hot_path": false,
+      "kernel_read_only": true,
+      "n_fft_must_be_at_least_window_samples": true
+    },
+    "hot_path": {
+      "module": "causal_phase_tracking.causal_cecHT.streaming_core",
+      "api": "CausalCecHTCore.process_block_into(samples, block_context, output_buffers) -> CecHTProcessStatus",
+      "input": {
+        "ndim": 1,
+        "real_floating": true,
+        "supported_dtypes": [
+          "float32",
+          "float64"
+        ],
+        "dtype": "exact_config_match",
+        "c_contiguous": true,
+        "input_mutated": false,
+        "implicit_conversion": false
+      },
+      "pinned_endpoint_atol_by_input_dtype": {
+        "float32": 2e-07,
+        "float64": 2e-12
+      },
+      "output_buffer_dtypes": {
+        "phase_rad": "float64",
+        "amplitude": "float64",
+        "valid": "bool",
+        "ready": "bool",
+        "reason_code": "uint8",
+        "relative_sample_index": "int64"
+      },
+      "output_buffer_requirements": {
+        "ndim": 1,
+        "c_contiguous": true,
+        "writeable": true,
+        "capacity": "at_least_len_samples",
+        "input_output_aliasing": false,
+        "semantic_output_output_aliasing": false
+      },
+      "process_status_codes": {
+        "ok": 0,
+        "empty": 1,
+        "epoch_restarted": 2,
+        "stream_fault": 3,
+        "structural_reject": 4
+      },
+      "reason_codes": {
+        "none": 0,
+        "explicit_reset": 1,
+        "warmup": 2,
+        "nonfinite_input": 3,
+        "sample_gap": 4,
+        "duplicate_sample": 5,
+        "out_of_order_sample": 6,
+        "sampling_rate_unknown": 7,
+        "sampling_rate_mismatch": 8,
+        "unit_unknown": 9,
+        "unit_mismatch": 10,
+        "channel_unknown": 11,
+        "channel_mismatch": 12,
+        "polarity_unknown": 13,
+        "polarity_mismatch": 14,
+        "nonfinite_endpoint": 15,
+        "structural_input_type": 20,
+        "structural_input_ndim": 21,
+        "structural_input_dtype": 22,
+        "structural_input_contiguity": 23,
+        "structural_output_schema": 24,
+        "structural_alias": 25,
+        "structural_capacity": 26,
+        "structural_context_schema": 27
+      },
+      "well_formed_slots": "len(samples)",
+      "structural_reject_slots": 0,
+      "invalid_numeric_sentinel": 0.0,
+      "consumer_must_obey_valid_ready_masks": true
+    },
+    "fault_semantics": {
+      "epoch_change": "clear_dynamic_state_then_ingest_new_block",
+      "stream_fault": "write_len_samples_invalid_slots_clear_state_no_prefix",
+      "structural_reject": "write_zero_slots_clear_state",
+      "empty": "write_zero_slots_preserve_dynamic_state",
+      "old_phase_carry_forward": false
+    },
+    "metadata_layering": {
+      "hot_context_fields": [
+        "stream_epoch",
+        "first_relative_index",
+        "declared_sampling_rate_hz",
+        "unit_code",
+        "channel_code",
+        "polarity_code",
+        "verified_fields_mask"
+      ],
+      "hot_context_has_device_time_semantics": false,
+      "cold_record_fields": [
+        "method_id",
+        "parameter_version",
+        "config_version",
+        "segment_id",
+        "sample_index",
+        "acquisition_timestamp_s",
+        "phase_rad",
+        "amplitude",
+        "frequency_hz",
+        "valid",
+        "ready",
+        "invalid_reason",
+        "estimate_time_position",
+        "compensation_applied"
+      ],
+      "cold_records_require_external_verified_metadata": true,
+      "internal_epoch_or_counter_may_impersonate_device_metadata": false
+    },
+    "host_wrapper_implemented": true,
+    "target_host_deadline_claimed": false,
+    "thread_safe_or_reentrant_claimed": false
+  },
+  "required_input_metadata": [
+    "segment_id",
+    "absolute_sample_index",
+    "acquisition_timestamp_s",
+    "sampling_rate_hz",
+    "numeric_unit",
+    "channel_identity",
+    "polarity"
+  ],
+  "phase_convention": {
+    "storage_unit": "radian",
+    "normalization_interval": "[-pi,pi)",
+    "wrap_equation": "((angle + pi) % (2*pi)) - pi",
+    "positive_pi_maps_to_rad": -3.141592653589793,
+    "zero_phase_definition": "positive_peak_of_Fpz_minus_Cz",
+    "positive_direction": "increasing_analytic_phase",
+    "reference_definition": "angle(x + i*hilbert_transform(x))"
+  },
+  "update_grid": {
+    "mode": "every_input_sample",
+    "sampling_rate_hz": 250.0,
+    "interval_samples": 1,
+    "interval_s": 0.004,
+    "alternative_or_sensitivity_grids": []
+  },
+  "time_semantics": {
+    "estimate_time_position": "trailing_window_last_input_sample",
+    "estimate_timestamp_source": "endpoint_acquisition_timestamp_s",
+    "crossing_interpolation": "linear_between_adjacent_valid_endpoints",
+    "decision_time_position": "current_endpoint_callback",
+    "acoustic_onset_available": false,
+    "event_times_may_be_labeled_acoustic_onset": false,
+    "latency_compensation_s": {
+      "estimator_phase_offset": 0.0,
+      "scheduler_prediction_horizon": 0.0,
+      "acoustic_output_delay": 0.0
+    }
+  },
+  "evaluation_errors": {
+    "estimator_error": {
+      "equation": "wrap(phi_estimate - phi_reference)",
+      "positive_error_meaning": "estimate_leads_reference",
+      "sampling": "every_valid_ready_endpoint_at_250hz"
+    },
+    "trigger_error": {
+      "equation": "wrap(phi_reference_at_event - theta_target)",
+      "positive_error_meaning": "reference_has_passed_target",
+      "sampling": "pseudo_events_only",
+      "event_time_views": [
+        "estimated_crossing_time",
+        "decision_time"
+      ]
+    }
+  },
+  "target_phase": {
+    "unit": "radian",
+    "default_rad": 0.0,
+    "runtime_configurable": true,
+    "evaluation_grid_rad": [
+      0.0,
+      0.7853981633974483,
+      1.5707963267948966,
+      2.356194490192345,
+      -3.141592653589793,
+      -2.356194490192345,
+      -1.5707963267948966,
+      -0.7853981633974483
+    ],
+    "update_boundary": "declared_sample_or_block_boundary",
+    "update_is_atomic": true,
+    "clear_crossing_comparator_on_update": true,
+    "cancel_pending_event_on_update": true,
+    "replay_old_crossing_after_update": false
+  },
+  "pseudo_trigger": {
+    "implemented": true,
+    "module": "causal_phase_tracking.causal_cecHT.pseudo_trigger",
+    "api": "CausalCecHTTrigger.process_block_into(relative_sample_index, phase_rad, valid, ready, outputs) -> PseudoTriggerStatus",
+    "crossing_direction": "positive_only",
+    "phase_unwrap_required": true,
+    "crossing_interpolation": "linear_between_adjacent_valid_endpoints",
+    "record_reverse_crossing": false,
+    "amplitude_eligibility_enabled": false,
+    "refractory_s_dev_placeholder": 0.5,
+    "refractory_tuning_status": "deferred_to_real_stimulation_handover",
+    "real_stimulation_refractory_selected": false,
+    "target_update_clears_comparator_and_cancels_pending": true,
+    "real_actuation_enabled": false,
+    "output": "timestamped_pseudo_event_only",
+    "output_buffer_dtypes": {
+      "event": "bool",
+      "crossing_time_s": "float64",
+      "decision_time_s": "float64"
+    },
+    "latency_compensation_s": {
+      "estimator_phase_offset": 0.0,
+      "scheduler_prediction_horizon": 0.0,
+      "acoustic_output_delay": 0.0
+    }
+  },
+  "evaluation_implementation": {
+    "rate_adapter": {
+      "module": "causal_phase_tracking.causal_simulation_evaluation.rate_adapter",
+      "api": "Causal100To250Adapter.process_block_into(samples, first_input_index, outputs) -> RationalRateAdapterStatus",
+      "upsample": 5,
+      "downsample": 2,
+      "kernel_rate_hz": 500.0,
+      "cutoff_hz": 40.0,
+      "stopband_hz": 50.0,
+      "kernel_taps": 33,
+      "group_delay_output_samples": 8,
+      "group_delay_s": 0.032,
+      "samples_not_shifted_internally": true
+    },
+    "edf_replay": {
+      "module": "causal_phase_tracking.causal_simulation_evaluation.edf_replay",
+      "load_window_s": [
+        34230.0,
+        34530.0
+      ],
+      "central_window_s": [
+        34290.0,
+        34470.0
+      ],
+      "source_rate_hz": 100.0,
+      "target_rate_hz": 250.0
+    },
+    "offline_reference": {
+      "module": "causal_phase_tracking.causal_simulation_evaluation.offline_reference",
+      "resample": "non-causal resample_poly 5/2",
+      "bandpass": "0.5-1.25 Hz Butterworth order 2 sosfiltfilt",
+      "phase": "scipy.signal.hilbert angle",
+      "online_use_forbidden": true
+    },
+    "pipeline": {
+      "module": "causal_phase_tracking.causal_simulation_evaluation.evaluation_pipeline",
+      "api": "run_causal_pipeline(stream_values, stream_valid, stream_index, core_config, trigger_config, chunk_sizes)"
+    },
+    "smoke_artifacts": [
+      "causal_phase_tracking/causal_simulation_evaluation/artifacts/smoke_report.md",
+      "causal_phase_tracking/causal_simulation_evaluation/artifacts/smoke_metrics.json"
+    ]
+  },
+  "validity": {
+    "required_flags": [
+      "valid",
+      "ready",
+      "invalid_reason"
+    ],
+    "old_value_carry_forward": false,
+    "invalid_numeric_fields": {
+      "phase_rad": null,
+      "amplitude": null,
+      "frequency_hz": null
+    },
+    "invalid_or_not_ready_may_trigger": false,
+    "fault_inputs": [
+      "segment_change",
+      "sample_gap",
+      "out_of_order_sample",
+      "duplicate_sample",
+      "NaN",
+      "Inf",
+      "sampling_rate_unknown",
+      "sampling_rate_mismatch",
+      "unit_unknown",
+      "unit_mismatch",
+      "channel_unknown",
+      "channel_mismatch",
+      "polarity_unknown",
+      "polarity_mismatch",
+      "explicit_reset"
+    ],
+    "fault_response": [
+      "invalidate_current_estimate",
+      "clear_estimator_and_crossing_state",
+      "cancel_pending_pseudo_event",
+      "restart_method_specific_warmup",
+      "record_machine_readable_reason"
+    ]
+  },
+  "output_fields": [
+    "method_id",
+    "parameter_version",
+    "config_version",
+    "segment_id",
+    "sample_index",
+    "acquisition_timestamp_s",
+    "phase_rad",
+    "amplitude",
+    "frequency_hz",
+    "valid",
+    "ready",
+    "invalid_reason",
+    "estimate_time_position",
+    "compensation_applied"
+  ],
+  "safety": {
+    "shadow_only": true,
+    "audio_or_hardware_api_allowed": false,
+    "human_stimulation_allowed": false,
+    "decision_time_is_acoustic_onset": false
+  },
+  "global_sync": {
+    "registry_key": "scoped_contracts.causal_cecht",
+    "required_equal_fields": [
+      "input.signal",
+      "input.numeric_unit",
+      "input.polarity",
+      "phase_convention.normalization_interval",
+      "target_phase.default_rad",
+      "target_phase.evaluation_grid_rad"
+    ],
+    "required_method_scoped_equal_fields": [
+      "input.sampling_rate_hz"
+    ],
+    "verification": "pytest_contract_sync_test"
+  },
+  "references": [
+    {
+      "title": "Optimal Calibration of the Endpoint-corrected Hilbert Transform",
+      "url": "https://arxiv.org/abs/2601.13962"
+    },
+    {
+      "title": "eikeosmers/cecHT pinned source",
+      "url": "https://github.com/eikeosmers/cecHT/tree/e079c3115f202a4272cf64143bf33ddddc247778"
+    },
+    {
+      "title": "MEEGkit ECHT implementation",
+      "url": "https://github.com/nbara/python-meegkit/blob/master/meegkit/phase.py"
+    },
+    {
+      "title": "Phase-locked loop for precisely timed acoustic stimulation during sleep",
+      "url": "https://doi.org/10.1016/j.jneumeth.2015.11.007"
+    },
+    {
+      "title": "Benchmarking Real-Time Algorithms for In-Phase Auditory Stimulation",
+      "url": "https://doi.org/10.1109/TBME.2022.3157468"
+    },
+    {
+      "title": "CircStat: A MATLAB Toolbox for Circular Statistics",
+      "url": "https://doi.org/10.18637/jss.v031.i10"
+    }
+  ]
+}

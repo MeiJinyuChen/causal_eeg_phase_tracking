@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "repository": "https://github.com/eikeosmers/cecHT",
+  "commit": "e079c3115f202a4272cf64143bf33ddddc247778",
+  "commit_tree_sha1": "740ff402a2814995c48e000ab9a4023a9d0aa769",
+  "retrieval_date": "2026-08-06",
+  "license": {
+    "spdx_identifier": "BSD-3-Clause",
+    "file": "LICENSE"
+  },
+  "paper": {
+    "title": "Optimal Calibration of the Endpoint-corrected Hilbert Transform",
+    "authors": [
+      "Eike Osmers",
+      "Dorothea Kolossa"
+    ],
+    "arxiv": "2601.13962v2",
+    "url": "https://arxiv.org/abs/2601.13962"
+  },
+  "canonical_test_environment": {
+    "python": "3.13.9",
+    "numpy": "2.3.5",
+    "scipy": "1.16.3"
+  },
+  "verification_dependencies": {
+    "jsonschema": "4.25.0",
+    "pytest": "8.4.2"
+  },
+  "runtime_files": [
+    "phase.py"
+  ],
+  "files": {
+    "phase.py": {
+      "raw_url": "https://raw.githubusercontent.com/eikeosmers/cecHT/e079c3115f202a4272cf64143bf33ddddc247778/phase.py",
+      "sha256": "49b85cfd75f382aa9b12e00fca4cbfd903bf4daad0101ccba42b162f2af27bea",
+      "git_blob_sha1": "977692f8124d11499d09c8bedb5a6e4ab004b780",
+      "size_bytes": 11673
+    },
+    "LICENSE": {
+      "raw_url": "https://raw.githubusercontent.com/eikeosmers/cecHT/e079c3115f202a4272cf64143bf33ddddc247778/LICENSE",
+      "sha256": "fdd2688b462490149d03d26ce94343d7720dba2d28f270abe331fe09bc7ede8f",
+      "git_blob_sha1": "7968deffe55510f82c6b68e4cd69ac250a1105c9",
+      "size_bytes": 1520
+    }
+  },
+  "endpoint_index_evidence": {
+    "accepted_endpoint_index": -1,
+    "readme_online_example_index": 0,
+    "readme_conflict_recorded": true,
+    "simulation_url": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/simulations/simple.py",
+    "window_loop_url": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/utils.py"
+  },
+  "endpoint_characterization": {
+    "parameters": {
+      "sampling_rate_hz": 373,
+      "duration_s": 1,
+      "sample_count": 373,
+      "test_frequency_hz": 2.5,
+      "initial_phase_count": 8,
+      "initial_phases_rad": [
+        0.0,
+        0.7853981633974483,
+        1.5707963267948966,
+        2.356194490192345,
+        3.141592653589793,
+        3.9269908169872414,
+        4.71238898038469,
+        5.497787143782138
+      ],
+      "band_hz": [
+        1.875,
+        3.125
+      ],
+      "filter_order": 2,
+      "filter_type": "butter",
+      "n_fft": 373,
+      "fft_mode": "exact"
+    },
+    "accepted_endpoint_index": -1,
+    "rejected_readme_index": 0,
+    "golden_atol": 1e-12,
+    "minimum_calibrated_endpoint_advantage_rad": 0.01,
+    "branches": {
+      "uncalibrated": {
+        "golden_endpoint_real": -1.0580374193202473,
+        "golden_endpoint_imag": 0.17611524876424103,
+        "mean_abs_endpoint_error_rad": 0.13135600617913523,
+        "mean_abs_rejected_index_error_rad": 0.08802897169510443
+      },
+      "calibrated": {
+        "golden_endpoint_real": -0.9959222375666699,
+        "golden_endpoint_imag": 0.0334620057244191,
+        "mean_abs_endpoint_error_rad": 0.005982482493083197,
+        "mean_abs_rejected_index_error_rad": 0.043327032711055646
+      }
+    },
+    "limitation": "For the uncalibrated branch at this fixed frequency, index 0 has a smaller raw phase error because its one-sample temporal misalignment partially cancels the uncalibrated filter phase bias. This does not change the endpoint time index; calibrated cecHT and the upstream N-1 calibration derivation identify index -1 as the endpoint."
+  },
+  "local_modifications": false
+}

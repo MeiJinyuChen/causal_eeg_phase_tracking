@@ -1,0 +1,224 @@
+{
+  "identity": {
+    "schema_version": "1.0",
+    "manifest_id": "clas-cecht-synthetic-cases-100hz-v1",
+    "status": "deprecated_100hz_historical_only",
+    "upstream_commit": "e079c3115f202a4272cf64143bf33ddddc247778"
+  },
+  "historical_record": {
+    "deprecated": true,
+    "runtime_or_evaluation_use_allowed": false,
+    "replacement_manifest": "cecht_synthetic_cases.json",
+    "replacement_sampling_rate_hz": 250.0
+  },
+  "scope": {
+    "fixed_window_math_core_only": true,
+    "sampling_rate_hz": 100.0,
+    "production_parameter_claim": false,
+    "streaming_adapter": false,
+    "fault_or_reset_state_machine": false,
+    "trigger_or_edf": false,
+    "runtime_or_clinical_acceptance": false
+  },
+  "endpoint": {
+    "index": -1,
+    "sample_number": "N-1",
+    "time_s": "(N-1)/fs",
+    "error": "wrap(angle(z[-1])-phi_true[N-1])",
+    "error_sign": "positive_estimate_leads_truth"
+  },
+  "profiles": [
+    {
+      "profile_id": "P0_exact_600",
+      "sampling_rate_hz": 100.0,
+      "sample_count": 600,
+      "band_hz": [0.5, 1.25],
+      "filter_order": 2,
+      "filter_type": "butter",
+      "n_fft": 600,
+      "fft_mode": "exact",
+      "expected_resolved_n_fft": 600
+    },
+    {
+      "profile_id": "P1_fast_601",
+      "sampling_rate_hz": 100.0,
+      "sample_count": 601,
+      "band_hz": [0.5, 1.25],
+      "filter_order": 2,
+      "filter_type": "butter",
+      "n_fft": null,
+      "fft_mode": "fast",
+      "expected_resolved_n_fft": 605
+    }
+  ],
+  "branches": [
+    "calibrated_oracle_f0",
+    "calibrated_fixed_f0",
+    "uncalibrated"
+  ],
+  "fixed_calibration_frequency_hz": 0.875,
+  "calibration_lifecycle": {
+    "fresh_estimator_per_profile_case_branch": true,
+    "f0_set_at_construction": true,
+    "fit_calls_per_evaluation": 1,
+    "endpoint_expression": "transform(window)[-1]",
+    "reuse_gain_across_oracle_cases": false,
+    "oracle_runtime_eligible": false
+  },
+  "phase_grid_rad": [
+    0.0,
+    0.39269908169872414,
+    0.7853981633974483,
+    1.1780972450961724,
+    1.5707963267948966,
+    1.9634954084936207,
+    2.356194490192345,
+    2.748893571891069,
+    3.141592653589793,
+    3.5342917352885173,
+    3.9269908169872414,
+    4.319689898685965,
+    4.71238898038469,
+    5.105088062083414,
+    5.497787143782138,
+    5.890486225480862
+  ],
+  "signals": {
+    "pure_tone": {
+      "formula_id": "cos_phi_v1",
+      "frequencies_hz": [0.55, 0.75, 1.0, 1.2],
+      "amplitude": 1.0,
+      "truth_label": "analytic_driver_phase",
+      "oracle_f0": "driver_frequency_hz"
+    },
+    "linear_chirp": {
+      "formula_id": "linear_chirp_integrated_phase_v1",
+      "directions_hz": [[0.55, 1.2], [1.2, 0.55]],
+      "duration_s": "(N-1)/fs",
+      "slope_hz_per_s": "(f_end-f_start)/duration_s",
+      "truth_label": "integrated_driver_phase",
+      "oracle_f0": "endpoint_instantaneous_frequency_hz"
+    },
+    "amplitude_modulated": {
+      "formula_id": "positive_cosine_envelope_v1",
+      "carrier_frequencies_hz": [0.75, 1.0],
+      "envelope_frequency_hz": 0.1,
+      "modulation_depth": 0.5,
+      "envelope_phase_rad": 0.0,
+      "minimum_envelope": 0.5,
+      "truth_label": "analytic_driver_phase",
+      "oracle_f0": "carrier_frequency_hz"
+    },
+    "harmonic": {
+      "formula_id": "fundamental_plus_harmonics_v1",
+      "fundamental_frequency_hz": 0.75,
+      "conditions": [
+        {
+          "condition_id": "mild",
+          "h2": 0.1,
+          "h3": 0.05,
+          "psi2_rad": 0.0,
+          "psi3_rad": 0.0
+        },
+        {
+          "condition_id": "stronger",
+          "h2": 0.25,
+          "h3": 0.1,
+          "psi2_rad": 1.5707963267948966,
+          "psi3_rad": -1.0471975511965976
+        }
+      ],
+      "truth_label": "fundamental_driver_phase",
+      "oracle_f0": "fundamental_frequency_hz"
+    },
+    "cutoff_boundary": {
+      "formula_id": "cos_phi_v1",
+      "frequencies_hz": [0.5, 1.25],
+      "truth_label": "analytic_driver_phase",
+      "oracle_f0": "driver_frequency_hz",
+      "assertion_policy": "descriptive_only"
+    }
+  },
+  "noise": {
+    "formula_id": "clean_plus_exact_window_rms_scaled_noise_v1",
+    "types": ["white", "pink_timmer_koenig_beta_1"],
+    "carrier_frequencies_hz": [0.75, 1.0],
+    "snr_db": [20.0, 10.0, 0.0],
+    "snr_definition": "10*log10(mean(clean^2)/mean(scaled_noise^2))",
+    "base_seed": 20260806,
+    "paired_seeds": [
+      20260806,
+      20260807,
+      20260808,
+      20260809,
+      20260810,
+      20260811,
+      20260812,
+      20260813,
+      20260814,
+      20260815,
+      20260816,
+      20260817,
+      20260818,
+      20260819,
+      20260820,
+      20260821
+    ],
+    "pairing": "phase_grid_rad[i] with paired_seeds[i]",
+    "truth_label": "unpolluted_driver_phase",
+    "oracle_f0": "carrier_frequency_hz"
+  },
+  "properties": {
+    "profile_id": "P0_exact_600",
+    "frequency_hz": 0.75,
+    "initial_phase_rad": 0.39269908169872414,
+    "positive_scales": [0.1, 1.0, 10.0],
+    "positive_scaling_expectation": "endpoint_phase_and_wrapped_error_invariant",
+    "polarity_expectation": "estimate_and_truth_both_shift_by_pi_so_error_is_invariant"
+  },
+  "case_expansion": {
+    "case_id_format": "{profile_id}__{family}__{condition_id}__phase_{phase_index:02d}",
+    "counts_per_profile": {
+      "pure_tone": 64,
+      "linear_chirp": 32,
+      "amplitude_modulated": 32,
+      "harmonic": 32,
+      "white_noise": 96,
+      "pink_noise": 96,
+      "cutoff_boundary": 32,
+      "total": 384
+    },
+    "profile_count": 2,
+    "total_signal_cases": 768,
+    "branch_count": 3,
+    "total_endpoint_evaluations": 2304
+  },
+  "metrics": [
+    "circular_bias_rad",
+    "resultant_length",
+    "circular_sd_rad",
+    "mean_absolute_error_rad",
+    "median_absolute_error_rad",
+    "q95_absolute_error_rad"
+  ],
+  "pure_tone_complex_objective": "mean_phase_grid(abs(z[-1]-exp(1j*phi_true[N-1]))^2)",
+  "golden_policy": {
+    "complex_endpoint_rtol": 0.0,
+    "complex_endpoint_atol": 1e-12,
+    "full_trajectory_frozen": false,
+    "owner_approval_required_for_updates": true,
+    "allowed_update_reasons": [
+      "upstream_commit_change",
+      "canonical_environment_change",
+      "case_manifest_change"
+    ]
+  },
+  "references": {
+    "calibration_paper": "https://arxiv.org/abs/2601.13962",
+    "pinned_phase_core": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/phase.py",
+    "pinned_simple_simulation": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/simulations/simple.py",
+    "pinned_harmonic_experiments": "https://github.com/eikeosmers/cecHT/blob/e079c3115f202a4272cf64143bf33ddddc247778/simulations/harmonic_experiments.py",
+    "circular_statistics": "https://doi.org/10.18637/jss.v031.i10",
+    "power_law_noise": "https://arxiv.org/abs/astro-ph/9501029"
+  }
+}

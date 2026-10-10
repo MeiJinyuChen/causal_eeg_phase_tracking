@@ -1,0 +1,66 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# EEG / raw data
+data/
+raw_data/
+*.edf
+*.bdf
+*.fif
+*.mat
+
+# Archives / large binaries
+*.zip
+*.7z
+*.tar
+*.gz
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Private config / secrets - never commit
+.env
+.env.*
+*.env
+*.key
+*.pem
+*.pfx
+*.p12
+*.jks
+*.keystore
+credentials.json
+credentials*.json
+*credential*.json
+secrets.json
+secrets.yaml
+secrets.yml
+secrets/
+.netrc
+.git-credentials
+api_key*
+apikey*
+*_secret*
+*token*.txt
+id_rsa*
+id_ed25519*
+
+# Sleep-EDF Expanded record SC4001 shipped with the offline benchmark, so the
+# evaluator can rerun it without downloading anything. These negations must stay
+# after the generic "data/" and "*.edf" rules above.
+!offline_benchmark/data/
+!offline_benchmark/data/SC4001E0-PSG.edf
+!offline_benchmark/data/SC4001EC-Hypnogram.edf
+# Generated benchmark artifacts (regenerated on every run).
+offline_benchmark/outputs/

@@ -1,0 +1,28 @@
+{
+  "qa": {
+    "nonfinite_count": 0,
+    "longest_flat_run_s": 0.04,
+    "rail_count": 0,
+    "derivative_mad_outlier_ratio": 0.005318365448851
+  },
+  "load_start_s": 34230.0,
+  "load_end_s": 34530.0,
+  "central_start_s": 34290.0,
+  "central_end_s": 34470.0,
+  "reference_definition": {
+    "resample": "scipy.signal.resample_poly 5/2 non-causal",
+    "bandpass": "0.5-1.25 Hz Butterworth order 2 sosfiltfilt zero-phase",
+    "phase": "scipy.signal.hilbert angle"
+  },
+  "estimator_ready_central_samples": 45001,
+  "estimator_circular_bias_rad": -0.6202748119890639,
+  "estimator_resultant_length": 0.4231234671648079,
+  "estimator_circular_sd_rad": 1.3115572865685232,
+  "estimator_mean_abs_wrapped_error_rad": 1.1315404872344679,
+  "estimator_median_abs_wrapped_error_rad": 0.9277160586959337,
+  "estimator_hit_rate_within_30deg": 0.2897713384147019,
+  "pseudo_event_count": 279,
+  "pseudo_event_circular_bias_rad": 0.9699361452742686,
+  "pseudo_event_mean_abs_wrapped_error_rad": 1.2255068682155235,
+  "wall_clock_seconds": 4.155900400000974
+}
