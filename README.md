@@ -67,7 +67,7 @@ that the PLL module is withheld.
   Attribution License v1.0).
 - **References.** The compared baselines follow Santostasi 2016 (classic PLL), Ferster
   2022 (real-time benchmarking), Opitz-style autoregressive prediction, and Berens'
-  CircStat. Other references is noted in documents. 
+  CircStat. Other references are noted in documents. 
 
 ## Engineering invariants
 
